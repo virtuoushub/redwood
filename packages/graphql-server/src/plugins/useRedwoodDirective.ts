@@ -12,6 +12,8 @@ export function hasDirective(info: GraphQLResolveInfo): boolean {
 }
 
 function isQueryOrMutation(info: GraphQLResolveInfo): boolean {
+  // @TODO implement this check
+
   console.log(info)
   return true
 }
