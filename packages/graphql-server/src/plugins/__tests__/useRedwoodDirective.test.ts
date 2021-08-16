@@ -103,31 +103,42 @@ describe('Directives on Queries', () => {
 
   it('Should disallow execution on requireAuth', async () => {
     const result = await testInstance.execute(`query { protected }`)
+
     assertSingleExecutionValue(result)
+
     expect(result.errors).toBeTruthy()
     expect(result.errors[0].message).toBe(AUTH_ERROR_MESSAGE)
+
     expect(result.data?.protected).toBeNull()
   })
 
   it('Should allow execution on skipAuth', async () => {
     const result = await testInstance.execute(`query { public }`)
+
     assertSingleExecutionValue(result)
+
     expect(result.errors).toBeFalsy()
     expect(result.data?.public).toBe('public')
   })
 
   it('Should not allow execution without a directive', async () => {
     const result = await testInstance.execute(`query { noDirectiveSpecified }`)
+
     assertSingleExecutionValue(result)
+
     expect(result.errors).toBeTruthy()
     expect(result.errors[0].message).toBe(DIRECTIVE_REQUIRED_ERROR_MESSAGE)
+
     expect(result.data?.noDirectiveSpecified).toBeNull()
   })
 
   it('Should not require Type fields (ie, not Query or Mutation root types) to have directives declared', async () => {
     const result = await testInstance.execute(`query { posts { title } }`)
+
     assertSingleExecutionValue(result)
+
     expect(result.errors).toBeFalsy()
+
     expect(result.data.posts).toBeTruthy()
     expect(result.data.posts[0]).toHaveProperty('title')
     expect(result.data.posts[0].title).toEqual(
@@ -139,9 +150,12 @@ describe('Directives on Queries', () => {
     const result = await testInstance.execute(
       `query { userProfiles { name, email } }`
     )
+
     assertSingleExecutionValue(result)
+
     expect(result.errors).toBeTruthy()
     expect(result.errors[0].message).toBe(AUTH_ERROR_MESSAGE)
+
     expect(result.data).toBeFalsy()
     expect(result.data?.name).toBeUndefined()
     expect(result.data?.email).toBeUndefined()
@@ -149,8 +163,11 @@ describe('Directives on Queries', () => {
 
   it('Should permit a skipAuth() directive if a Type field declares that directive', async () => {
     const result = await testInstance.execute(`query { userProfiles { name } }`)
+
     assertSingleExecutionValue(result)
+
     expect(result.errors).toBeFalsy()
+
     expect(result.data).toBeTruthy()
     expect(result.data.userProfiles).toBeTruthy()
     expect(result.data.userProfiles[0]).toHaveProperty('name')
@@ -160,9 +177,11 @@ describe('Directives on Queries', () => {
 
   it('Should disallow execution of a Query with requireAuth() even if another directive says to skip', async () => {
     const result = await testInstance.execute(`query { ambiguousAuthQuery }`)
+
     assertSingleExecutionValue(result)
     expect(result.errors).toBeTruthy()
     expect(result.errors[0].message).toBe(AUTH_ERROR_MESSAGE)
+
     expect(result.data?.ambiguousAuthQuery).toBeNull()
   })
 
@@ -186,6 +205,7 @@ describe('Directives on Queries', () => {
       `mutation { updatePost(input: { title: "Post changed" }) { title } }`
     )
     assertSingleExecutionValue(result)
+
     expect(result.errors).toBeTruthy()
     expect(result.errors[0].message).toBe(AUTH_ERROR_MESSAGE)
 
@@ -197,7 +217,9 @@ describe('Directives on Queries', () => {
     const result = await testInstance.execute(
       `mutation { deletePost(title: "Post to delete") { title } }`
     )
+
     assertSingleExecutionValue(result)
+
     expect(result.errors).toBeTruthy()
     expect(result.errors[0].message).toBe(AUTH_ERROR_MESSAGE)
 
@@ -209,6 +231,7 @@ describe('Directives on Queries', () => {
       'Mutation'
     ) as GraphQLTypeWithFields
     const deletePost = mutationType.getFields()['deletePost']
+
     const result = getRoles(deletePost.astNode.directives[0])
 
     expect(result).toContain('admin')
