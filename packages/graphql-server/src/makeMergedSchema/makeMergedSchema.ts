@@ -15,6 +15,8 @@ import {
   GraphQLTypeWithFields,
 } from '@redwoodjs/api'
 
+import { schema as authDirectivesSchema } from '../plugins/authDirectives'
+
 import * as rootSchema from './rootSchema'
 
 const mapFieldsToService = ({
@@ -200,7 +202,11 @@ export const makeMergedSchema = ({
   schemaOptions?: Partial<IExecutableSchemaDefinition>
 }) => {
   const typeDefs = mergeTypes(
-    [rootSchema.schema, ...Object.values(schemas).map(({ schema }) => schema)],
+    [
+      rootSchema.schema,
+      authDirectivesSchema,
+      ...Object.values(schemas).map(({ schema }) => schema),
+    ],
     { all: true }
   )
 
