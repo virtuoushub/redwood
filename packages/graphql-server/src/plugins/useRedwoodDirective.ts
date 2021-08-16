@@ -1,36 +1,66 @@
 import { Plugin } from '@envelop/types'
 import { DirectiveNode, GraphQLObjectType, GraphQLResolveInfo } from 'graphql'
 
+export const DIRECTIVE_REQUIRED_ERROR_MESSAGE =
+  'You must specify one of @requireAuth, @skipAuth or a custom directive'
+
 export function hasDirective(info: GraphQLResolveInfo): boolean {
-  const { parentType, fieldName, schema } = info
-  const schemaType = schema.getType(parentType.name) as GraphQLObjectType
-  const field = schemaType.getFields()[fieldName]
-  const astNode = field.astNode
-  // if directives array exists, we check the length
-  // other wise false
-  return !!astNode?.directives?.length
+  try {
+    const { parentType, fieldName, schema } = info
+    const schemaType = schema.getType(parentType.name) as GraphQLObjectType
+    const field = schemaType.getFields()[fieldName]
+    const astNode = field.astNode
+    // if directives array exists, we check the length
+    // other wise false
+    return !!astNode?.directives?.length
+  } catch (error) {
+    console.error(error)
+    return false
+  }
 }
 
 function isQueryOrMutation(info: GraphQLResolveInfo): boolean {
-  // @TODO implement this check
+  const { parentType } = info
 
-  console.log(info)
-  return true
+  return parentType.name === 'Query' || parentType.name === 'Mutation'
 }
 
 export function getDirectiveByName(
   info: GraphQLResolveInfo,
   name: string
 ): null | DirectiveNode {
-  const { parentType, fieldName, schema } = info
-  const schemaType = schema.getType(parentType.name) as GraphQLObjectType
-  const field = schemaType.getFields()[fieldName]
-  const astNode = field.astNode
-  const associatedDirective = astNode?.directives?.find(
-    (directive) => directive.name.value === name
-  )
+  try {
+    const { parentType, fieldName, schema } = info
+    const schemaType = schema.getType(parentType.name) as GraphQLObjectType
+    const field = schemaType.getFields()[fieldName]
+    const astNode = field.astNode
+    const associatedDirective = astNode?.directives?.find(
+      (directive) => directive.name.value === name
+    )
 
-  return associatedDirective || null
+    return associatedDirective || null
+  } catch (error) {
+    console.error(error)
+    return null
+  }
+}
+
+export function getRoles(authDirective: DirectiveNode): [string] | undefined {
+  if (authDirective.kind === 'Directive') {
+    const directiveArgs = authDirective.arguments?.filter(
+      (d) => d.name.value === 'roles'
+    )
+
+    const roles =
+      directiveArgs
+        ?.values()
+        .next()
+        .value?.value?.values?.map((v: any) => v.value) || undefined
+
+    return roles
+  }
+
+  return undefined
 }
 
 // use this to get specific argument values
@@ -86,9 +116,7 @@ export const useRedwoodDirective = (
       return {
         async onResolverCalled({ args, root, info }) {
           if (isQueryOrMutation(info) && !hasDirective(info)) {
-            throw new Error(
-              'You must specify atleast @requireAuth, @skipAuth or a custom directive'
-            )
+            throw new Error(DIRECTIVE_REQUIRED_ERROR_MESSAGE)
           }
 
           const directiveNode = getDirectiveByName(info, options.name)
