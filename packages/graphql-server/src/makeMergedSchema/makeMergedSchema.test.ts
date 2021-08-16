@@ -1,6 +1,6 @@
 import { parse, GraphQLResolveInfo } from 'graphql'
 
-import { GraphQLTypeWithFields } from '@redwoodjs/api'
+import { GraphQLTypeWithFields } from '../index'
 
 import { makeMergedSchema } from './makeMergedSchema'
 

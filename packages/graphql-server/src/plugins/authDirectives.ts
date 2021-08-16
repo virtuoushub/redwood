@@ -1,5 +1,5 @@
 export const REQUIRE_AUTH_SDL = /* GraphQL */ `
-  directive @requireAuth on FIELD_DEFINITION
+  directive @requireAuth(roles: [String]) on FIELD_DEFINITION
 `
 
 export const SKIP_AUTH_SDL = /* GraphQL */ `
