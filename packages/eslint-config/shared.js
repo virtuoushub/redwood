@@ -62,16 +62,10 @@ module.exports = {
       },
     ],
     'react/display-name': 'off',
+    'react-hooks/rules-of-hooks': 'error',
     'react-hooks/exhaustive-deps': 'warn',
   },
   overrides: [
-    {
-      files:['*.tsx', '*.js', '*.jsx'],
-      ignorePatterns: ['api/src/**.*'],
-      rules: {
-        'react-hooks/rules-of-hooks': 'error',
-      }
-    },
     {
       files: ['*.ts', '*.tsx'],
       parser: '@typescript-eslint/parser',

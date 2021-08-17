@@ -3,7 +3,7 @@
 import fs from 'fs'
 import path from 'path'
 
-import Configstore from 'configstore/index'
+import Configstore from 'configstore'
 import execa from 'execa'
 import TerminalLink from 'terminal-link'
 
