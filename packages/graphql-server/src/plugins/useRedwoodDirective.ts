@@ -90,13 +90,13 @@ export function getDirectiveArgument(
   return undefined
 }
 
-type ExecuteFn = (
+export type ExecuteFn = (
+  directiveNode: DirectiveNode,
   resolverInfo?: {
     root: unknown
     args: Record<string, unknown>
     info: GraphQLResolveInfo
-  },
-  directiveNode?: DirectiveNode
+  }
 ) => void | Promise<void>
 
 export type RedwoodDirectivePluginOptions = {
@@ -122,14 +122,11 @@ export const useRedwoodDirective = (
           const directiveNode = getDirectiveByName(info, options.name)
 
           if (directiveNode) {
-            await executeDirective(
-              {
-                info,
-                args,
-                root,
-              },
-              directiveNode
-            )
+            await executeDirective(directiveNode, {
+              info,
+              args,
+              root,
+            })
           }
         },
       }
