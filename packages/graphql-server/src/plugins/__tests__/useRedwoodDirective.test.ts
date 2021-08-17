@@ -9,98 +9,103 @@ import {
   DIRECTIVE_REQUIRED_ERROR_MESSAGE,
 } from '../useRedwoodDirective'
 
-describe('Directives on Queries', () => {
-  const AUTH_ERROR_MESSAGE = 'Sorry, you cannot do that'
+//  ===== Test Setup ======
+const AUTH_ERROR_MESSAGE = 'Sorry, you cannot do that'
+const schemaWithDirectiveQueries = makeExecutableSchema({
+  typeDefs: `
+    ${REQUIRE_AUTH_SDL}
+    ${SKIP_AUTH_SDL}
 
-  let testInstance
-  let schemaWithDirective
+    type Post {
+      title: String! @skipAuth
+    }
 
-  beforeAll(() => {
-    schemaWithDirective = makeExecutableSchema({
-      typeDefs: `
-      ${REQUIRE_AUTH_SDL}
-      ${SKIP_AUTH_SDL}
+    type UserProfile {
+      name: String! @skipAuth
+      email: String! @requireAuth
+    }
 
-      type Post {
-        title: String! @skipAuth
-      }
+    type WithoutDirectiveType {
+      id: Int!
+      description: String!
+    }
 
-      type UserProfile {
-        name: String! @skipAuth
-        email: String! @requireAuth
-      }
+    type Query {
+      protected: String @requireAuth
+      public: String @skipAuth
+      noDirectiveSpecified: String
+      posts: [Post!]! @skipAuth
+      userProfiles: [UserProfile!]! @skipAuth
+      ambiguousAuthQuery: String @requireAuth @skipAuth
+      withoutDirective: WithoutDirectiveType @skipAuth
+    }
 
-      type Query {
-        protected: String @requireAuth
-        public: String @skipAuth
-        noDirectiveSpecified: String
-        posts: [Post!]! @skipAuth
-        userProfiles: [UserProfile!]! @skipAuth
-        ambiguousAuthQuery: String @requireAuth @skipAuth
-      }
+    input CreatePostInput {
+      title: String!
+    }
 
-      input CreatePostInput {
-        title: String!
-      }
+    input UpdatePostInput {
+      title: String!
+    }
 
-      input UpdatePostInput {
-        title: String!
-      }
-
-      type Mutation {
-        createPost(input: CreatePostInput!): Post! @skipAuth
-        updatePost(input: UpdatePostInput!): Post! @requireAuth
-        deletePost(title: String!): Post! @requireAuth(roles: ["admin", "publisher"])
-      }
-      `,
-      resolvers: {
-        Query: {
-          protected: (_root, _args, _context) => 'protected',
-          public: (_root, _args, _context) => 'public',
-          noDirectiveSpecified: () => 'i should not be returned',
-          posts: () => [{ title: 'Five ways to test Envelop plugins' }],
-          userProfiles: () => [
-            { name: 'Usario Jones', email: 'usario@example.com' },
-          ],
-          ambiguousAuthQuery: (_root, _args, _context) => 'am i allowed?',
-        },
-        Mutation: {
-          createPost: (_root, args, _context) => {
-            return {
-              title: args.input.title,
-            }
-          },
-          updatePost: (_root, args, _context) => {
-            return {
-              title: args.input.title,
-            }
-          },
-          deletePost: (_root, _args, _context) => {},
-        },
-      },
-    })
-
-    testInstance = createTestkit(
-      [
-        useRedwoodDirective({
-          onExecute: () => {
-            throw new Error(AUTH_ERROR_MESSAGE)
-          },
-          name: 'requireAuth',
-        }),
-        useRedwoodDirective({
-          onExecute: () => {
-            return
-          },
-          name: 'skipAuth',
-        }),
+    type Mutation {
+      createPost(input: CreatePostInput!): Post! @skipAuth
+      updatePost(input: UpdatePostInput!): Post! @requireAuth
+      deletePost(title: String!): Post! @requireAuth(roles: ["admin", "publisher"])
+    }
+    `,
+  resolvers: {
+    Query: {
+      protected: (_root, _args, _context) => 'protected',
+      public: (_root, _args, _context) => 'public',
+      noDirectiveSpecified: () => 'i should not be returned',
+      posts: () => [{ title: 'Five ways to test Envelop plugins' }],
+      userProfiles: () => [
+        { name: 'Usario Jones', email: 'usario@example.com' },
       ],
-      schemaWithDirective
-    )
-  })
+      ambiguousAuthQuery: (_root, _args, _context) => 'am i allowed?',
+      withoutDirective: (_root, _args, _context) => ({
+        id: 42,
+        description: 'I am a type without any directives',
+      }),
+    },
+    Mutation: {
+      createPost: (_root, args, _context) => {
+        return {
+          title: args.input.title,
+        }
+      },
+      updatePost: (_root, args, _context) => {
+        return {
+          title: args.input.title,
+        }
+      },
+      deletePost: (_root, _args, _context) => {},
+    },
+  },
+})
 
-  // Queries
+const testInstance = createTestkit(
+  [
+    useRedwoodDirective({
+      onExecute: () => {
+        throw new Error(AUTH_ERROR_MESSAGE)
+      },
+      name: 'requireAuth',
+    }),
+    useRedwoodDirective({
+      onExecute: () => {
+        return
+      },
+      name: 'skipAuth',
+    }),
+  ],
+  schemaWithDirectiveQueries
+)
 
+// ====== End Test Setup ======
+
+describe('Directives on Queries', () => {
   it('Should disallow execution on requireAuth', async () => {
     const result = await testInstance.execute(`query { protected }`)
 
@@ -185,7 +190,19 @@ describe('Directives on Queries', () => {
     expect(result.data?.ambiguousAuthQuery).toBeNull()
   })
 
-  // Mutations
+  it('Should allow querying of types with no directive, as long as the query has a directive', async () => {
+    const result = await testInstance.execute(`query { withoutDirective {
+      id
+    } }`)
+
+    assertSingleExecutionValue(result)
+    expect(result.errors).toBeFalsy()
+
+    expect(result.data.withoutDirective.id).toBe(42)
+  })
+})
+
+describe('Directives on Mutations', () => {
   it('Should allow mutation on skipAuth', async () => {
     const result = await testInstance.execute(
       `mutation { createPost(input: { title: "Post Created" }) { title } }`
@@ -227,7 +244,7 @@ describe('Directives on Queries', () => {
   })
 
   it('Should identify the role names specified in requireAuth()', async () => {
-    const mutationType = schemaWithDirective.getType(
+     const mutationType = schemaWithDirectiveQueries.getType(
       'Mutation'
     ) as GraphQLTypeWithFields
     const deletePost = mutationType.getFields()['deletePost']
