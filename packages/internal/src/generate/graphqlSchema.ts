@@ -19,7 +19,11 @@ type Redwood {
 
 type Query {
   redwood: Redwood
-}`
+}
+
+directive @skipAuth on FIELD_DEFINITION
+directive @requireAuth on FIELD_DEFINITION
+`
 
 export const generateGraphQLSchema = async () => {
   const rwjsPaths = getPaths()
@@ -28,7 +32,7 @@ export const generateGraphQLSchema = async () => {
     const f: GenerateResponse = await generate(
       {
         cwd: rwjsPaths.api.graphql,
-        schema: [rootSchema, '**/*.sdl.{js,ts}'],
+        schema: [rootSchema, '**/*.sdl.{js,ts}', '**/directives/*.{js,ts}'],
         config: {
           scalars: {
             DateTime: 'string',
