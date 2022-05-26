@@ -30,6 +30,7 @@ module.exports = {
     'react',
     'react-hooks',
     'jest-dom',
+    '@nrwl/eslint-plugin-nx',
   ],
   ignorePatterns: ['node_modules', 'dist'],
   settings: {
@@ -99,6 +100,12 @@ module.exports = {
     ],
   },
   overrides: [
+    {
+      files: ['*.ts', '*.tsx', '*.js', '*.jsx'],
+      rules: {
+        '@nrwl/nx/enforce-module-boundaries': 'warn',
+      },
+    },
     {
       files: ['*.tsx', '*.js', '*.jsx'],
       excludedFiles: ['api/src/**'],
