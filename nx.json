@@ -7,6 +7,7 @@
       "runner": "nx/tasks-runners/default",
       "options": {
         "cacheableOperations": [
+          "lint",
           "test",
           "build"
         ],
@@ -15,6 +16,7 @@
     }
   },
   "targetDependencies": {
+    "lint": [],
     "test": [],
     "build": []
   },
