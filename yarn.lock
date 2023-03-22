@@ -2119,13 +2119,23 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@envelop/core@npm:3.0.4, @envelop/core@npm:^3.0.0":
+"@envelop/core@npm:3.0.4":
   version: 3.0.4
   resolution: "@envelop/core@npm:3.0.4"
   dependencies:
     "@envelop/types": 3.0.1
     tslib: 2.4.0
   checksum: 607c0aa5ebc45c1713432bf8379a89f46f82785c9894c6c322cb8c2b375a9191892087bf07550f682ba2012e76c9f2225d04f18aaa87ef5eb2a970817fd855d6
+  languageName: node
+  linkType: hard
+
+"@envelop/core@npm:3.0.6, @envelop/core@npm:^3.0.0":
+  version: 3.0.6
+  resolution: "@envelop/core@npm:3.0.6"
+  dependencies:
+    "@envelop/types": 3.0.2
+    tslib: ^2.5.0
+  checksum: 8196e997f351b7d1630fc6cfb6aa0fb4257dd1769cde12da227418508f1be433ed94271b433c47b5ccd5079728b93cdb7326738afda76d49c791f3ed736d7fc5
   languageName: node
   linkType: hard
 
@@ -7620,7 +7630,7 @@ __metadata:
     "@babel/cli": 7.20.7
     "@babel/core": 7.20.12
     "@babel/runtime-corejs3": 7.20.7
-    "@envelop/core": 3.0.4
+    "@envelop/core": 3.0.6
     "@envelop/depth-limit": 2.0.4
     "@envelop/disable-introspection": 4.0.4
     "@envelop/filter-operation-type": 4.0.4
