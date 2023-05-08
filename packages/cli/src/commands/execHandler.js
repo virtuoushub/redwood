@@ -27,7 +27,17 @@ export const handler = async (args) => {
     return
   }
 
-  const scriptPath = path.join(getPaths().scripts, name)
+  let scriptDir = getPaths().scripts
+  let scriptName = name
+  if (name.includes(path.sep)) {
+    const splitScriptPath = scriptName.split(path.sep)
+    // if `splitScriptName` has length > 2, this is going to break
+    const [splitScriptDir, splitScriptName] = splitScriptPath
+    scriptDir = path.join(getPaths().scripts, splitScriptDir)
+    scriptName = splitScriptName
+  }
+
+  const scriptPath = path.join(scriptDir, scriptName)
 
   const {
     overrides: _overrides,
