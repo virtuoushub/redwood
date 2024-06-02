@@ -12,21 +12,21 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@actions/cache@npm:3.2.1":
-  version: 3.2.1
-  resolution: "@actions/cache@npm:3.2.1"
+"@actions/cache@npm:3.2.4":
+  version: 3.2.4
+  resolution: "@actions/cache@npm:3.2.4"
   dependencies:
     "@actions/core": ^1.10.0
     "@actions/exec": ^1.0.1
     "@actions/glob": ^0.1.0
-    "@actions/http-client": ^2.0.1
+    "@actions/http-client": ^2.1.1
     "@actions/io": ^1.0.1
     "@azure/abort-controller": ^1.1.0
     "@azure/ms-rest-js": ^2.6.0
     "@azure/storage-blob": ^12.13.0
-    semver: ^6.1.0
+    semver: ^6.3.1
     uuid: ^3.3.3
-  checksum: eae40199a2b32abc72803143fbb9aa81077098bcd15b027b9b9485ccbea59fc03585f6b75068bf6f5becac3c63da9131138f13e6566bfe678372f433dcb72b79
+  checksum: 81bbf9dd1712d44eb92a1b832cd76a10bd17b72a379d0c7a73ae209d152d1e5b0fb310449622c511c48ace72e92572b2927993a4c85ac98eae2f6677c42a6a6a
   languageName: node
   linkType: hard
 
@@ -69,12 +69,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@actions/http-client@npm:^2.0.1":
-  version: 2.1.0
-  resolution: "@actions/http-client@npm:2.1.0"
+"@actions/http-client@npm:^2.0.1, @actions/http-client@npm:^2.1.1":
+  version: 2.2.1
+  resolution: "@actions/http-client@npm:2.2.1"
   dependencies:
     tunnel: ^0.0.6
-  checksum: 3936947d05c394ec3365a8757e13bd8cd0fb124cc1503254e46a95b2b8342fbf3f2a3c13d56d37e1d6705939cf2808dc64b4a38b75f83995fdc2e878e3aef89c
+    undici: ^5.25.4
+  checksum: 371771e68fcfe1383e59657eb5bc421aba5e1826f5e497efd826236b64fc1ff11f0bc91f936d7f1086f6bb3fd209736425a4d357b98fdfb7a8d054cbb84680e8
   languageName: node
   linkType: hard
 
@@ -2919,6 +2920,13 @@ __metadata:
   dependencies:
     text-decoding: ^1.0.0
   checksum: fe13effa7a7a2aa270ef62586cd8d04339036b10ffa1d3d6a883e502fcc1bdc6d8de1bd7ac9d46ef7718bed3b1202cac058e281f5053dee262af7538243cb780
+  languageName: node
+  linkType: hard
+
+"@fastify/busboy@npm:^2.0.0":
+  version: 2.1.1
+  resolution: "@fastify/busboy@npm:2.1.1"
+  checksum: 6f8027a8cba7f8f7b736718b013f5a38c0476eea67034c94a0d3c375e2b114366ad4419e6a6fa7ffc2ef9c6d3e0435d76dd584a7a1cbac23962fda7650b579e3
   languageName: node
   linkType: hard
 
@@ -31318,7 +31326,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "root-workspace-0b6124@workspace:."
   dependencies:
-    "@actions/cache": 3.2.1
+    "@actions/cache": 3.2.4
     "@actions/core": 1.10.0
     "@actions/exec": 1.1.1
     "@actions/glob": 0.4.0
@@ -31708,7 +31716,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"semver@npm:^6.0.0, semver@npm:^6.1.0, semver@npm:^6.2.0, semver@npm:^6.3.0, semver@npm:^6.3.1":
+"semver@npm:^6.0.0, semver@npm:^6.2.0, semver@npm:^6.3.0, semver@npm:^6.3.1":
   version: 6.3.1
   resolution: "semver@npm:6.3.1"
   bin:
@@ -34313,12 +34321,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"undici@npm:^5.19.1":
-  version: 5.22.1
-  resolution: "undici@npm:5.22.1"
+"undici@npm:^5.19.1, undici@npm:^5.25.4":
+  version: 5.28.4
+  resolution: "undici@npm:5.28.4"
   dependencies:
-    busboy: ^1.6.0
-  checksum: 50479d28a9a5de4faae410cc73523823d339a7d016b77bfe89d3cdf78fe5441950f30958c9cfb6e2acd8fb4f914308597c75bd0c15e74143212f67e2ef020477
+    "@fastify/busboy": ^2.0.0
+  checksum: 08d0f2596553aa0a54ca6e8e9c7f45aef7d042c60918564e3a142d449eda165a80196f6ef19ea2ef2e6446959e293095d8e40af1236f0d67223b06afac5ecad7
   languageName: node
   linkType: hard
 
